@@ -26,7 +26,7 @@
 //  Copyright (c) 2015 BestTimeInterval. All rights reserved.
 //
 
-#import "commonObject.h"
+#import "bestTimeInterval.h"
 
 const NSInteger HOUR_MIN = 60;
 const NSInteger ONE_MIN_SEC = 60;
@@ -35,21 +35,37 @@ const NSInteger A_DAY = 24;
 const NSInteger WEEK_DAYS = 7;
 const NSInteger MONTH_DAYS = 30;
 const NSInteger YEAR_DAYS = 365;
-@implementation commonObject
+
+@implementation bestTimeInterval
+
++(instancetype)sharedInstance{
+
+    bestTimeInterval *shared = nil;
+    if (shared == nil) {
+        shared = [[bestTimeInterval alloc] init];
+    }
+    return shared;
+}
 
 -(NSDictionary *)postTime:(NSString *)dateOfPost
 {
     // getting current date
+    
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
-    NSString *strCurrentDate =[dateFormatter stringFromDate:[NSDate date]];
-    NSDate *dateCurrent = [dateFormatter dateFromString:strCurrentDate];
+     dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
+    [dateFormatter setTimeZone:[NSTimeZone localTimeZone]];
+    NSString *strCurrentDate = [dateFormatter stringFromDate:[NSDate date]];
+     NSDate *dateCurrent = [dateFormatter dateFromString:strCurrentDate];
+    
     
     //getting date of post
+    if ([dateOfPost isEqualToString:@"(null)"] || dateOfPost.length == 0)
+    {
+        dateOfPost = @"2015-06-25 13:00:38";
+    }
     NSDateFormatter *formatterOfPostDate =[[NSDateFormatter alloc] init];
     formatterOfPostDate.dateFormat = @"yyyy-MM-dd HH:mm:ss";
     NSDate *datePost = [formatterOfPostDate dateFromString:dateOfPost];
-
     
     NSTimeInterval timeInterval = [dateCurrent timeIntervalSinceDate:datePost];
    
@@ -64,10 +80,10 @@ const NSInteger YEAR_DAYS = 365;
     [_dicOfIntervals setObject:[self intervalInMonths:timeInterval] forKey:@"months"];
     [_dicOfIntervals setObject:[self intervalInYears:timeInterval] forKey:@"year"];
     
-    [self bestIntervalTime:_dicOfIntervals];
+   // [self bestIntervalTime:_dicOfIntervals];
     NSString *strTime = [NSString stringWithFormat:@"%@",[self bestIntervalTime:_dicOfIntervals]];
     
-    [_dicOfIntervals setObject:[self bestIntervalTime:_dicOfIntervals] forKey:@"best_time_interval"];
+    [_dicOfIntervals setObject:strTime forKey:@"best_time_interval"];
     NSLog(@"%@",strTime);
     return _dicOfIntervals;
 }
@@ -77,7 +93,7 @@ const NSInteger YEAR_DAYS = 365;
 -(NSString *)intervalInMins:(NSInteger)timeInSec
 {
     NSInteger intervalInMins = (timeInSec / HOUR_MIN);
-    NSString *strMins = [NSString stringWithFormat:@"%ld",intervalInMins];
+    NSString *strMins = [NSString stringWithFormat:@"%ld",(long)intervalInMins];
     return strMins;
 }
 
@@ -85,14 +101,14 @@ const NSInteger YEAR_DAYS = 365;
 -(NSString *)intervalInHours:(NSInteger)timeInSec
 {
     NSInteger intervalInHours = (timeInSec / ONE_HOUR_SEC);
-    NSString *strHours = [NSString stringWithFormat:@"%ld",intervalInHours];
+    NSString *strHours = [NSString stringWithFormat:@"%ld",(long)intervalInHours];
     return strHours;
 }
 
 -(NSString *)intervalInDays:(NSInteger)timeInSec
 {
     NSInteger intervalInDays = (timeInSec / (ONE_HOUR_SEC * A_DAY) );
-    NSString *strDays = [NSString stringWithFormat:@"%ld",intervalInDays];
+    NSString *strDays = [NSString stringWithFormat:@"%ld",(long)intervalInDays];
     return strDays;
 }
 
@@ -100,21 +116,21 @@ const NSInteger YEAR_DAYS = 365;
 -(NSString *)intervalInWeeks:(NSInteger)timeInSec
 {
     NSInteger intervalInWeeks = (timeInSec / (ONE_HOUR_SEC * A_DAY * WEEK_DAYS));
-    NSString *strWeeks = [NSString stringWithFormat:@"%ld",intervalInWeeks];
+    NSString *strWeeks = [NSString stringWithFormat:@"%ld",(long)intervalInWeeks];
     return strWeeks;
 }
 
 -(NSString *)intervalInMonths:(NSInteger)timeInSec
 {
     NSInteger intervalInMonths = (timeInSec / (ONE_HOUR_SEC * A_DAY * MONTH_DAYS));
-    NSString *strMonths = [NSString stringWithFormat:@"%ld",intervalInMonths];
+    NSString *strMonths = [NSString stringWithFormat:@"%ld",(long)intervalInMonths];
     return strMonths;
 }
 
 -(NSString *)intervalInYears:(NSInteger)timeInSec
 {
     NSInteger intervalInYears = (timeInSec / (ONE_HOUR_SEC * A_DAY * YEAR_DAYS));
-    NSString *strYears = [NSString stringWithFormat:@"%ld",intervalInYears];
+    NSString *strYears = [NSString stringWithFormat:@"%ld",(long)intervalInYears];
     return strYears;
 }
 
@@ -122,7 +138,13 @@ const NSInteger YEAR_DAYS = 365;
 
 -(NSString *)bestIntervalTime:(NSDictionary *)dicOfInteravlsGot
 {
-    if ([[dicOfInteravlsGot objectForKey:@"min"] integerValue] < 60 && [[dicOfInteravlsGot objectForKey:@"min"] integerValue] > 1)
+    
+    if ([[dicOfInteravlsGot objectForKey:@"sec"] integerValue] < 60 && [[dicOfInteravlsGot objectForKey:@"sec"] integerValue] > 1)
+    {
+            return @"Just now";
+    }
+
+   else if ([[dicOfInteravlsGot objectForKey:@"min"] integerValue] < 60 && [[dicOfInteravlsGot objectForKey:@"min"] integerValue] > 1)
     {
         if ([[dicOfInteravlsGot objectForKey:@"min"] integerValue] == 1)
         {
@@ -133,7 +155,7 @@ const NSInteger YEAR_DAYS = 365;
             return [[dicOfInteravlsGot objectForKey:@"min"] stringByAppendingFormat:@" minutes ago"];
         }
     }
-    else if ([[dicOfInteravlsGot objectForKey:@"hours"] integerValue] < 24 && [[dicOfInteravlsGot objectForKey:@"hours"] integerValue] > 1)
+    else if ([[dicOfInteravlsGot objectForKey:@"hours"] integerValue] < 24 && [[dicOfInteravlsGot objectForKey:@"hours"] integerValue] >= 1)
     {
         
         if ([[dicOfInteravlsGot objectForKey:@"min"] integerValue] == 1)
@@ -149,7 +171,7 @@ const NSInteger YEAR_DAYS = 365;
     {
         if ([[dicOfInteravlsGot objectForKey:@"days"] integerValue] > 7 && [[dicOfInteravlsGot objectForKey:@"days"] integerValue] < 14)
         {
-            return [[dicOfInteravlsGot objectForKey:@"days"] stringByAppendingFormat:@" days ago"];
+            return [[dicOfInteravlsGot objectForKey:@"weeks"] stringByAppendingFormat:@" week ago"];
         }
         else
         {
@@ -160,7 +182,7 @@ const NSInteger YEAR_DAYS = 365;
     {
         if ([[dicOfInteravlsGot objectForKey:@"months"] integerValue] == 1)
         {
-            return [[dicOfInteravlsGot objectForKey:@"min"] stringByAppendingFormat:@" month ago"];
+            return [[dicOfInteravlsGot objectForKey:@"months"] stringByAppendingFormat:@" month ago"];
         }
         else
         {
@@ -178,16 +200,33 @@ const NSInteger YEAR_DAYS = 365;
             return [[dicOfInteravlsGot objectForKey:@"days"] stringByAppendingFormat:@" days ago"];
         }
     }
+    else if ([[dicOfInteravlsGot objectForKey:@"days"] integerValue] == 0 && [[dicOfInteravlsGot objectForKey:@"hours"] integerValue] == 0 && [[dicOfInteravlsGot objectForKey:@"months"] integerValue] == 0 && [[dicOfInteravlsGot objectForKey:@"weeks"] integerValue] == 0 && [[dicOfInteravlsGot objectForKey:@"year"] integerValue] == 0)
+    {
+        if ([[dicOfInteravlsGot objectForKey:@"min"] integerValue] < 1)
+        {
+            return @"Just Now";
+        }
+        else
+        {
+            return [[dicOfInteravlsGot objectForKey:@"min"] stringByAppendingFormat:@" mins ago"];
+        }
+    }
     else
     {
         if ([[dicOfInteravlsGot objectForKey:@"year"] integerValue] == 1)
         {
             return [[dicOfInteravlsGot objectForKey:@"year"] stringByAppendingFormat:@" year ago"];
         }
+        if ([[dicOfInteravlsGot objectForKey:@"year"] integerValue] >= 1)
+        {
+            NSInteger weeks = [[dicOfInteravlsGot objectForKey:@"year"] integerValue] * 52 ;
+            return [[NSString stringWithFormat:@"%ld",weeks] stringByAppendingFormat:@" weeks ago"];
+        }
         else
         {
-            return [[dicOfInteravlsGot objectForKey:@"year"] stringByAppendingFormat:@" years ago"];
+            return [[dicOfInteravlsGot objectForKey:@"year"] stringByAppendingFormat:@" - ago"];
         }
+
     }
 }
 @end
