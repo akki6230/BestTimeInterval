@@ -26,9 +26,12 @@ SOFTWARE.
 
 You have to use this given below method to get dictionary with all ossible key values and also there is a best time interval value with it - 
 
--(NSDictionary *)postTime:(NSString *)dateOfPost; 
++(instancetype)sharedInstance;
 
-to get only best time interval among all the dictionary values - pass the dictionary of intervals to it
+/* Get all time intervals differences(Year, Months, weeks, days hour, min, sec)
+ */
+-(NSDictionary *)postTime:(NSString *)dateOfPost;
 
+/*  Get best or least time interval among all the entered values which we get with -(NSDictionary *)postTime:(NSString *)dateOfPost
+ */
 -(NSString *)bestIntervalTime:(NSDictionary *)dicOfInteravlsGot;
-
