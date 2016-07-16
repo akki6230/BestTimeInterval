@@ -59,10 +59,6 @@ const NSInteger YEAR_DAYS = 365;
     
     
     //getting date of post
-    if ([dateOfPost isEqualToString:@"(null)"] || dateOfPost.length == 0)
-    {
-        dateOfPost = @"2015-06-25 13:00:38";
-    }
     NSDateFormatter *formatterOfPostDate =[[NSDateFormatter alloc] init];
     formatterOfPostDate.dateFormat = @"yyyy-MM-dd HH:mm:ss";
     NSDate *datePost = [formatterOfPostDate dateFromString:dateOfPost];
