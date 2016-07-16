@@ -24,14 +24,15 @@ SOFTWARE.
 
 
 
-You have to use this given below method to get dictionary with all ossible key values and also there is a best time interval value with it - 
-
+You have to use these given below method to get dictionary with all possible values and also you'll get best time interval - 
+```
 +(instancetype)sharedInstance;
-
-/* Get all time intervals differences(Year, Months, weeks, days hour, min, sec)
- */
+```
+ **Get all time intervals differences**  *(Year, Months, weeks, days hour, min, sec)*
+ ```
 -(NSDictionary *)postTime:(NSString *)dateOfPost;
-
-/*  Get best or least time interval among all the entered values which we get with -(NSDictionary *)postTime:(NSString *)dateOfPost
- */
+```
+**Get best or least time interval among all the entered values which we get with** *(NSDictionary *)postTime:(NSString *)dateOfPost*
+ ```
 -(NSString *)bestIntervalTime:(NSDictionary *)dicOfInteravlsGot;
+```
